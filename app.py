@@ -50,8 +50,35 @@ def index():
 
         # tasks is a variable that jinja could use
         return render_template("index.html", tasks=tasks)
-    
 
+# /delete/id
+@app.route("/delete/<int:id>")
+def delete(id:int):
+    # go to table and query id
+    delete_task = MyTask.query.get_or_404(id)
+    try:
+        # what to do with that data
+        # delete it
+        db.session.delete(delete_task)
+        db.session.commit()
+        return redirect("/")
+    except Exception as e:
+        return f"ERROR:{e}"
+    
+# update/id
+@app.route("/edit/<int:id>", methods=["POST", "GET"])
+def edit(id:int):
+    # get the entry
+    task = MyTask.query.get_or_404(id)
+    if request.method == "POST":
+        task.content = request.form["content"]
+        try:
+            db.session.commit()
+            return redirect("/")
+        except Exception as e:
+            return f"ERROR:{e}"
+    else:
+        return render_template("edit.html", task=task)
 
 if __name__ in "__main__":
     # temporary workspace that keeps track of application-level data during a request, CLI command or other activity
