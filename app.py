@@ -13,6 +13,7 @@ Scss(app)
 # mandatory config key in Flask-SQLAlchemy
 # tell application which database engine to use and where the database is located
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # User will generate a new database
 db = SQLAlchemy(app)
 
 # Model
@@ -26,6 +27,10 @@ class MyTask(db.Model):
     # To give data back to see on screen
     def __repr__(self) -> str:
         return f"Task {self.id}"
+
+# temporary workspace that keeps track of application-level data during a request, CLI command or other activity
+with app.app_context():
+    db.create_all()
 
 # Home page
 # Route to home page
@@ -80,9 +85,5 @@ def edit(id:int):
     else:
         return render_template("edit.html", task=task)
 
-if __name__ in "__main__":
-    # temporary workspace that keeps track of application-level data during a request, CLI command or other activity
-    with app.app_context():
-        db.create_all()
-
+if __name__ == "__main__":
     app.run(debug=True)
