@@ -46,8 +46,10 @@ def index():
     # See all current tasks
     else:
         # Send tasks to HTML pages by accessing variable
-        tasks = MyTask.query.order_by(MyTask.created).all
-        return render_template("index.html")
+        tasks = MyTask.query.order_by(MyTask.created).all()
+
+        # tasks is a variable that jinja could use
+        return render_template("index.html", tasks=tasks)
     
 
 
